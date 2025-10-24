@@ -1,0 +1,36 @@
+# Docker-compose with traefik reverse proxy for the CUPS dashboard - the port of CUPS still need to be exposed for direct communication with devices.
+services:
+  cups:
+    build: .
+    container_name: cups
+    hostname: cups-server    # should match avahi_hostname below
+    restart: unless-stopped
+    privileged: true
+    environment:
+      TZ: America_New_York         # change with your timezone
+      CUPS_ADMIN_USER: admin       # change with your user
+      CUPS_ADMIN_PASSWORD: admin   # change with your passoword
+      AVAHI_HOSTNAME: cups-server  # should match container hostname
+    ports:
+      - "631:631"     # cups port
+      #- "5353:5353"  # avahi port
+    volumes:
+      - ./cups-config:/etc/cups
+      - ./cups-spool:/var/spool/cups
+      - /dev/bus/usb:/dev/bus/usb
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cups.tls=true"
+      - "traefik.http.routers.cups.entrypoints=websecure"
+      - "traefik.http.routers.cups.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.cups.rule=Host(`https://yourdomain.com`)" # Replace with you domain name configured for traefik
+      - "traefik.http.routers.cups.service=cups"
+      - "traefik.http.services.cups.loadbalancer.server.port=631"
+      - "traefik.http.services.cups.loadbalancer.passhostheader=true"
+
+    networks:
+      - proxy_network
+
+networks:
+  proxy_network:
+    external: true

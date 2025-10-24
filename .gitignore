@@ -1,0 +1,16 @@
+# Mounted directories
+cups-config/
+cups-spool/
+
+# Docker-related files
+.dockerignore
+**/.dockerignore
+.dockerbuild/
+
+# Editor files
+.vscode/
+.idea/
+
+# Environment files
+.env
+*.env

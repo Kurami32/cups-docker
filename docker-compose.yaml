@@ -1,0 +1,20 @@
+# Mnimal example docker-compose file
+services:
+  cups:
+    build: .
+    container_name: cups
+    hostname: cups-server         # should match avahi hostname below
+    restart: unless-stopped
+    privileged: true
+    environment:
+      TZ: America/New_York
+      CUPS_ADMIN_USER: username   # your preferred username for the admin cups user
+      CUPS_ADMIN_PASSWORD: admin  # password for the admin cups user
+      AVAHI_HOSTNAME: hostname    # hostname
+    ports:
+      - "631:631"    # CUPS
+      #- "5353:5353" # Avahi
+    volumes:
+      - ./cups-config:/etc/cups      # directory for cups - you can change the left path to your desired directory
+      - ./cups-spool:/var/spool/cups # directory for spool - the same here
+      - /dev/bus/usb:/dev/bus/usb    # This should be mounted as is, you are mounting the USB devices - this allow CUPS access to the printer connected via USB

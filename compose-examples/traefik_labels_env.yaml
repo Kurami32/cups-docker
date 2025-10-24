@@ -1,0 +1,46 @@
+# compose file with environment variables - you will need  a .env (environment) file in the same directory.
+
+##################
+# CUPS_ADMIN_USER=your-username
+# CUPS_ADMIN_PASSWORD=your-password
+# AVAHI_HOSTNAME=cups-server
+# TRAEFIK_SERVICE_NAME=cups
+# TRAEFIK_SERVICE_PORT=631
+# DOMAIN_NAME=`https://your-domain.com`
+#################
+
+services:
+  cups:
+    build: .
+    container_name: cups
+    hostname: cups-server
+    restart: unless-stopped
+    privileged: true
+    environment:
+      - TZ=${TIMEZONE}
+      - CUPS_ADMIN_USER=${CUPS_ADMIN_USER:-admin}
+      - CUPS_ADMIN_PASSWORD=${CUPS_ADMIN_PASSWORD:-password}
+      - AVAHI_HOSTNAME=${AVAHI_HOSTNAME:-cups-server}
+    ports:
+      - "631:631"
+#      - "5353:5353"
+    volumes:
+      - ./cups-config:/etc/cups
+      - ./cups-spool:/var/spool/cups
+      - /dev/bus/usb:/dev/bus/usb
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${TRAEFIK_SERVICE_NAME}.tls=true"
+      - "traefik.http.routers.${TRAEFIK_SERVICE_NAME}.entrypoints=websecure"
+      - "traefik.http.routers.${TRAEFIK_SERVICE_NAME}.tls.certresolver=crypt"
+      - "traefik.http.routers.${TRAEFIK_SERVICE_NAME}.rule=Host(${DOMAIN_NAME})"
+      - "traefik.http.routers.${TRAEFIK_SERVICE_NAME}.service=${TRAEFIK_SERVICE_NAME}"
+      - "traefik.http.services.${TRAEFIK_SERVICE_NAME}.loadbalancer.server.port=${TRAEFIK_SERVICE_PORT}"
+      - "traefik.http.services.${TRAEFIK_SERVICE_NAME}.loadbalancer.passhostheader=true"
+
+    networks:
+      - proxy_network
+
+networks:
+  proxy_network:
+    external: true
