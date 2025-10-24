@@ -1,8 +1,8 @@
 # CUPS in docker for Epson Printers
 
-For use this image you can clone the repo or just recreate the same files. You will only need `entrypoint.sh`, `Dockerfile` and `docker-compose.yaml` as well.
+For use the custom docker image you can clone the repo or just recreate the same files. You will need `entrypoint.sh`, `Dockerfile` and `docker-compose.yaml` as well.
 
-## Steps to use this image
+## Steps to use
 
 1. Clone the repo (or recreate the mentioned files)
 2. Once you have all the required files, do:
@@ -53,4 +53,4 @@ https://<Domain_name>/printers/EPSON_L4260_Series
 
 - In the step 4, when selecting drivers, make sure to select "IPP Everywhere".
 
-Repeat all on every client.
+- Repeat all on every client.
