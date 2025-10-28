@@ -28,6 +28,12 @@ First of all, make sure that you have your printer physically connected to your 
 lsusb
 ```
 
+And also by the cups container:
+
+```shell
+docker exec -it cups lsusb
+```
+
 ### Connect the printer to CUPS
 Go to the CUPS GUI page in your browser, the URL could be: `http:localhost:631`, or `https://your-server-ip:631` if you are on a remote machine - or `https://your-domain.com` if you are behind a proxy.
 
